@@ -1,5 +1,6 @@
 import RPi.GPIO as GPIO
 import threading
+from time import sleep
 
 
 class WallDetector:
@@ -27,3 +28,4 @@ class WallDetector:
             if self.walls_detected == self.target_wall:
                 self.walls_detected = 0
                 return
+            sleep(1)

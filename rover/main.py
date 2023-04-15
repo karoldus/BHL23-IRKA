@@ -12,6 +12,7 @@ from servo import Servo
 from wall_detection import WallDetector
 import requests
 import time
+import json
 
 TRIG_PIN = 38
 ECHO_PIN = 40
@@ -21,7 +22,7 @@ SERVER_HOST = "192.168.43.80"
 SERVER_PORT = 8000
 
 hcsr04_sensor = HCSR04(TRIG_PIN, ECHO_PIN)
-# reader = SimpleMFRC522()
+reader = SimpleMFRC522()
 motor = TB6612FNG()
 servo = Servo(SERVO_PIN)
 wall_detector = WallDetector(WALL_DETECTOR_PIN)
@@ -40,7 +41,6 @@ def signal_handler(sig, frame):
 def thread_measure_distance():
     global global_distance
     while True:
-        print("test")
         distance = hcsr04_sensor.get_distance()
         print("Distance: ", distance)
         if distance < 15:
@@ -48,7 +48,7 @@ def thread_measure_distance():
             t_rfid.start()
             t_rfid.join()
             global_distance = distance
-            print("returning from measure_distance")
+            print(f"returning from measure_distance ({distance})")
             return
         sleep(1)
 
@@ -77,21 +77,22 @@ def servo_cycle():
 
 # thread responsible for reading RFID, started by measure_distance
 def thread_read_rfid():
-    global global_package_id
-    # package_id, text = reader.read()
-    package_id = 1
+    global global_package_id, wall_detector
+    print("Reading RFID")
+    package_id, text = reader.read()
+    # package_id = 1
     print(package_id)
     global_package_id = package_id
 
 
 def send_package_id(package_id, height):
     r = requests.post(
-        url=f"http://{SERVER_HOST}:{SERVER_PORT}/package",
-        data={"package_id": package_id, "height": height},
+        url=f"http://{SERVER_HOST}:{SERVER_PORT}/package/{package_id}/{height}",
     )
 
-    wall_num = r.text
-    print(wall_num)
+    wall_num = json.loads(r.text)["destination"]
+    wall_detector.target_wall = wall_num
+    print(f"Target wall: {wall_num}")
 
 
 if __name__ == "__main__":
@@ -101,7 +102,7 @@ if __name__ == "__main__":
         t_distance = threading.Thread(target=thread_measure_distance)
         t_distance.start()
         t_distance.join()
-        send_package_id(global_package_id, global_distance)
+        send_package_id(global_package_id, 18.5 - global_distance)
         t_motor = threading.Thread(target=thread_control_motors_forward)
         t_motor.start()
         t_motor.join()

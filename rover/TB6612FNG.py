@@ -6,8 +6,8 @@ class Direction(Enum):
     BACKWARD = -1
 
 class TB6612FNG:
-    motor_speed_left = -200
-    motor_speed_right = 300
+    motor_speed_left = 100
+    motor_speed_right = 91
 
     def __init__(self):
         self.driver = MotorDriverTB6612FNG()
