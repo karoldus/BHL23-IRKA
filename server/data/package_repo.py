@@ -1,10 +1,16 @@
-class PackageRepo:
-    packages_destinations = {}
+from abc import ABC, abstractmethod
+from model.package import Package
 
-    @staticmethod
-    def get(package_id):
-        return PackageRepo.packages_destinations.get(package_id)
 
-    @staticmethod
-    def add(package_id, destination):
-        PackageRepo.packages_destinations[package_id] = destination
+class PackageRepo(ABC):
+    @abstractmethod
+    def add_package(package: Package):
+        pass
+
+    @abstractmethod
+    def get_destination(package_id: str):
+        pass
+
+    @abstractmethod
+    def set_destination(package_id: str, destination: str):
+        pass
