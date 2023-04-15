@@ -7,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 # Constants
 
-FAST_API_HOST = "localhost"
+FAST_API_HOST = "192.168.43.80"
 FAST_API_PORT = 8000
 
 HEIGHT_LIMIT_1 = 7
@@ -28,10 +28,10 @@ app.add_middleware(
 
 # Routes
 
-@app.post("/package")
+@app.post("/package/{package_id}/{height}")
 def create_package(package_id: str, height: float):
 
-    if height < HEIGHT_LIMIT_1:
+    if height > HEIGHT_LIMIT_1:
         destination = 1
     else:
         destination = 2

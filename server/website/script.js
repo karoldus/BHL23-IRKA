@@ -18,5 +18,6 @@ function fetchPackages() {
   }
   
   // Fetch packages every 2 seconds
+  fetchPackages();
   setInterval(fetchPackages, 2000);
   
