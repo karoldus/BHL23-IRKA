@@ -32,7 +32,7 @@ global_package_id = 0
 
 
 def signal_handler(sig, frame):
-    motor.motor_stop()
+    motor.motor_stop(0)
     GPIO.cleanup()
     sys.exit(0)
 
@@ -44,6 +44,12 @@ def thread_measure_distance():
         distance = hcsr04_sensor.get_distance()
         print("Distance: ", distance)
         if distance < 15:
+            sleep(1)
+            distance = hcsr04_sensor.get_distance()
+            print("Distance: ", distance)
+            if distance > 15:
+                continue
+
             t_rfid = threading.Thread(target=thread_read_rfid)
             t_rfid.start()
             t_rfid.join()
@@ -55,23 +61,23 @@ def thread_measure_distance():
 
 # thread responsible for controlling the motors
 def thread_control_motors_forward():
-    motor.motor_ride(1)
     motor.start_time = time.time()
+    motor.motor_ride(-1)
     wall_detector.loop()
+    motor.motor_stop(-1)
     motor.end_time = time.time()
-    motor.motor_stop()
 
 def thread_control_motors_back():
-    motor.motor_ride(-1)
-    sleep(motor.end_time - motor.start_time)
-    motor.motor_stop()
+    motor.motor_ride(1)
+    sleep(motor.end_time - motor.start_time - 4 * 0.36)
+    motor.motor_stop(1)
 
 
 def servo_cycle():
     sleep(1)
-    servo.move(0)
-    sleep(1)
     servo.move(180)
+    sleep(1)
+    servo.move(90)
     sleep(1)
 
 
@@ -112,5 +118,4 @@ if __name__ == "__main__":
         t_motor = threading.Thread(target=thread_control_motors_back)
         t_motor.start()
         t_motor.join()
-        sleep(1)
     GPIO.cleanup()
