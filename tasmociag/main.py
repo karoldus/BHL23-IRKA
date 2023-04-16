@@ -20,7 +20,7 @@ def button_cb(channel):
     global button_pressed, pwm
     if button_pressed == False:
         pwm.start(0)
-        pwm.ChangeDutyCycle(8.1)
+        pwm.ChangeDutyCycle(7.7)
 
         button_pressed = True
         return
