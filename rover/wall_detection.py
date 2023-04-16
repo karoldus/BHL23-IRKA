@@ -14,15 +14,15 @@ class WallDetector:
         GPIO.setup(self.pin, GPIO.IN)
 
     def irq_cb(self, channel):
-        self.walls_detected += 1
-        GPIO.remove_event_detect(self.pin)
         with self.cv:
+            self.walls_detected += 1
+            GPIO.remove_event_detect(self.pin)
             self.cv.notify()
 
     def loop(self):
         while True:
-            GPIO.add_event_detect(self.pin, GPIO.FALLING, callback=self.irq_cb)
             with self.cv:
+                GPIO.add_event_detect(self.pin, GPIO.FALLING, callback=self.irq_cb)
                 self.cv.wait()
             print(f"Wall {self.walls_detected} detected")
             if self.walls_detected == self.target_wall:

@@ -18,14 +18,14 @@ class HCSR04:
         GPIO.setup(self.echo_pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
     def irq_cb(self, channel):
-        if self.hc_sr04_irq == False:
-            self.hc_sr04_irq = True
-            self.hc_sr04_start = time.time()
-        else:
-            self.hc_sr04_irq = False
-            self.hc_sr04_end = time.time()
-            GPIO.remove_event_detect(self.echo_pin)
-            with self.cv:
+        with self.cv:
+            if self.hc_sr04_irq == False:
+                self.hc_sr04_irq = True
+                self.hc_sr04_start = time.time()
+            else:
+                self.hc_sr04_irq = False
+                self.hc_sr04_end = time.time()
+                GPIO.remove_event_detect(self.echo_pin)
                 self.cv.notify()
 
     def get_distance(self):

@@ -43,11 +43,11 @@ def thread_measure_distance():
     while True:
         distance = hcsr04_sensor.get_distance()
         print("Distance: ", distance)
-        if distance < 15:
+        if distance < 16:
             sleep(1)
             distance = hcsr04_sensor.get_distance()
             print("Distance: ", distance)
-            if distance > 15:
+            if distance > 16:
                 continue
 
             t_rfid = threading.Thread(target=thread_read_rfid)
@@ -69,7 +69,7 @@ def thread_control_motors_forward():
 
 def thread_control_motors_back():
     motor.motor_ride(1)
-    sleep(motor.end_time - motor.start_time - 4 * 0.36)
+    sleep(motor.end_time - motor.start_time - 4 * 0.36 - 0.1)
     motor.motor_stop(1)
 
 

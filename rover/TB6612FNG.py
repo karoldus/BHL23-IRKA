@@ -17,7 +17,7 @@ class TB6612FNG:
 
     def motor_ride(self, direction):
         self.driver.dc_motor_run(TB6612FNGMotors.MOTOR_CHA, 50 * direction)
-        self.driver.dc_motor_run(TB6612FNGMotors.MOTOR_CHB, 47 * direction)
+        self.driver.dc_motor_run(TB6612FNGMotors.MOTOR_CHB, 49 * direction)
         sleep(0.12)
         self.driver.dc_motor_run(TB6612FNGMotors.MOTOR_CHA, 75 * direction)
         self.driver.dc_motor_run(TB6612FNGMotors.MOTOR_CHB, 70 * direction)
