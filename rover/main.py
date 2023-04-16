@@ -69,7 +69,7 @@ def thread_control_motors_forward():
 
 def thread_control_motors_back():
     motor.motor_ride(1)
-    sleep(motor.end_time - motor.start_time - 4 * 0.36 - 0.1)
+    sleep(motor.end_time - motor.start_time - 4 * 0.36 - 0.12)
     motor.motor_stop(1)
 
 

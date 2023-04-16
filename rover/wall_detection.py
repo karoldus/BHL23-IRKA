@@ -28,4 +28,4 @@ class WallDetector:
             if self.walls_detected == self.target_wall:
                 self.walls_detected = 0
                 return
-            sleep(1)
+            sleep(1.2)
