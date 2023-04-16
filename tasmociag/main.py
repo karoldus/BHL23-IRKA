@@ -1,5 +1,10 @@
 import RPi.GPIO as GPIO
-import time
+import signal
+import sys
+
+def signal_handler(signal, frame):
+    GPIO.cleanup()
+    sys.exit(0)
 
 BUTTON_PIN = 12
 SERVO_PIN = 35
@@ -15,7 +20,7 @@ def button_cb(channel):
     global button_pressed, pwm
     if button_pressed == False:
         pwm.start(0)
-        pwm.ChangeDutyCycle(8.0)
+        pwm.ChangeDutyCycle(8.1)
 
         button_pressed = True
         return
@@ -24,6 +29,7 @@ def button_cb(channel):
 
 
 GPIO.add_event_detect(BUTTON_PIN, GPIO.FALLING, callback=button_cb, bouncetime=50)
+signal.signal(signal.SIGINT, signal_handler)
 
 while True:
     pass
