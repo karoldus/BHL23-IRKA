@@ -37,8 +37,7 @@ def signal_handler(sig, frame):
     sys.exit(0)
 
 
-# thread responsible for measuring the distance using hc-sr04
-def thread_measure_distance():
+def measure_distance():
     global global_distance
     while True:
         distance = hcsr04_sensor.get_distance()
@@ -61,15 +60,15 @@ def thread_measure_distance():
 
 # thread responsible for controlling the motors
 def thread_control_motors_forward():
-    motor.start_time = time.time()
     motor.motor_ride(-1)
+    motor.start_time = time.time()
     wall_detector.loop()
-    motor.motor_stop(-1)
     motor.end_time = time.time()
+    motor.motor_stop(-1)
 
 def thread_control_motors_back():
     motor.motor_ride(1)
-    sleep(motor.end_time - motor.start_time - 4 * 0.36 - 0.12)
+    sleep(motor.end_time - motor.start_time - 0.15)
     motor.motor_stop(1)
 
 
@@ -105,9 +104,7 @@ if __name__ == "__main__":
     signal.signal(signal.SIGINT, signal_handler)
 
     while True:
-        t_distance = threading.Thread(target=thread_measure_distance)
-        t_distance.start()
-        t_distance.join()
+        measure_distance()
         send_package_id(global_package_id, 18.5 - global_distance)
         t_motor = threading.Thread(target=thread_control_motors_forward)
         t_motor.start()

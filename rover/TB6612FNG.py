@@ -8,7 +8,7 @@ class Direction(Enum):
 
 class TB6612FNG:
     motor_speed_right = 127
-    motor_speed_left = 113
+    motor_speed_left = 118
 
     def __init__(self):
         self.driver = MotorDriverTB6612FNG()
@@ -16,11 +16,17 @@ class TB6612FNG:
         self.end_time = 0
 
     def motor_ride(self, direction):
+        bias = 46
         self.driver.dc_motor_run(TB6612FNGMotors.MOTOR_CHA, 50 * direction)
-        self.driver.dc_motor_run(TB6612FNGMotors.MOTOR_CHB, 49 * direction)
+        if direction == 1:
+            bias = 60
+        self.driver.dc_motor_run(TB6612FNGMotors.MOTOR_CHB, bias * direction)
         sleep(0.12)
         self.driver.dc_motor_run(TB6612FNGMotors.MOTOR_CHA, 75 * direction)
-        self.driver.dc_motor_run(TB6612FNGMotors.MOTOR_CHB, 72 * direction)
+        bias = 71
+        if direction == 1:
+            bias = 74
+        self.driver.dc_motor_run(TB6612FNGMotors.MOTOR_CHB, bias * direction)
         sleep(0.12)
         self.driver.dc_motor_run(TB6612FNGMotors.MOTOR_CHA, 90 * direction)
         self.driver.dc_motor_run(TB6612FNGMotors.MOTOR_CHB, 87 * direction)
@@ -30,13 +36,13 @@ class TB6612FNG:
 
     def motor_stop(self, direction):
         self.driver.dc_motor_run(TB6612FNGMotors.MOTOR_CHA, 90 * direction)
-        self.driver.dc_motor_run(TB6612FNGMotors.MOTOR_CHB, 86 * direction)
+        self.driver.dc_motor_run(TB6612FNGMotors.MOTOR_CHB, 87 * direction)
         sleep(0.12)
         self.driver.dc_motor_run(TB6612FNGMotors.MOTOR_CHA, 75 * direction)
         self.driver.dc_motor_run(TB6612FNGMotors.MOTOR_CHB, 71 * direction)
         sleep(0.12)
         self.driver.dc_motor_run(TB6612FNGMotors.MOTOR_CHA, 50 * direction)
-        self.driver.dc_motor_run(TB6612FNGMotors.MOTOR_CHB, 48 * direction)
+        self.driver.dc_motor_run(TB6612FNGMotors.MOTOR_CHB, 46 * direction)
         sleep(0.12)
         self.driver.dc_motor_break(TB6612FNGMotors.MOTOR_CHA)
         self.driver.dc_motor_break(TB6612FNGMotors.MOTOR_CHB)

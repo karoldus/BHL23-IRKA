@@ -18,11 +18,11 @@ class HCSR04:
         GPIO.setup(self.echo_pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
     def irq_cb(self, channel):
-        with self.cv:
-            if self.hc_sr04_irq == False:
-                self.hc_sr04_irq = True
-                self.hc_sr04_start = time.time()
-            else:
+        if self.hc_sr04_irq == False:
+            self.hc_sr04_irq = True
+            self.hc_sr04_start = time.time()
+        else:
+            with self.cv:
                 self.hc_sr04_irq = False
                 self.hc_sr04_end = time.time()
                 GPIO.remove_event_detect(self.echo_pin)
@@ -34,7 +34,6 @@ class HCSR04:
             GPIO.output(self.trig_pin, GPIO.HIGH)
             time.sleep(0.00001)
             GPIO.output(self.trig_pin, GPIO.LOW)
-
             self.cv.wait()
 
         return (self.hc_sr04_end - self.hc_sr04_start) * 34000 / 2
